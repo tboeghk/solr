@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Consumer;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.util.ExecutorUtil;
 import org.apache.solr.common.util.SolrNamedThreadFactory;
@@ -376,6 +377,17 @@ class SolrCores {
       return ret;
     } finally {
       READ_WRITE_LOCK.writeLock().unlock();
+    }
+  }
+
+  SolrCore getCoreFromAnyList(String name, boolean incRefCount, UUID coreId, Consumer<SolrCore> callback) {
+    READ_WRITE_LOCK.readLock().lock();
+    try {
+      SolrCore core = getCoreFromAnyList(name, incRefCount, coreId);
+      callback.accept(core);
+      return core;
+    } finally {
+      READ_WRITE_LOCK.readLock().unlock();
     }
   }
 

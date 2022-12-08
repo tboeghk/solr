@@ -58,4 +58,9 @@ dependencies {
   implementation 'org.slf4j:slf4j-api'
   runtimeOnly 'com.lmax:disruptor'
   annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess'
+
+  implementation 'commons-io:commons-io'
+  implementation('org.mockito:mockito-core', {
+    exclude group: "net.bytebuddy", module: "byte-buddy-agent"
+  })
 }
