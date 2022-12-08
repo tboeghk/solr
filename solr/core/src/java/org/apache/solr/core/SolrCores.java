@@ -29,6 +29,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.util.ExecutorUtil;
 import org.apache.solr.common.util.SolrNamedThreadFactory;
@@ -321,6 +323,15 @@ class SolrCores {
       return ret;
     }
   }
+
+  SolrCore getCoreFromAnyList(String name, boolean incRefCount, UUID coreId, Consumer<SolrCore> callback) {
+    synchronized (modifyLock){
+      SolrCore core = getCoreFromAnyList(name, incRefCount, coreId);
+      callback.accept(core);
+      return core;
+    }
+  }
+
 
   SolrCore getCoreFromAnyList(String name, boolean incRefCount) {
     return getCoreFromAnyList(name, incRefCount, null);
